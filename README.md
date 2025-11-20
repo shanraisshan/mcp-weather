@@ -46,18 +46,18 @@ This repository provides two MCP server implementations:
 
 [→ View HTTP Implementation Details](./http/)
 
-### 2. [Command Server (Node.js)](./command/)
+### 2. [Command Server (Python)](./command/)
 
 **Type**: stdio (command-based)
-**Language**: TypeScript/Node.js
+**Language**: Python
 **Best for**: Local development, single client, simpler setup
 
 ```json
 {
   "mcpServers": {
     "weather": {
-      "command": "node",
-      "args": ["/path/to/command/dist/index.js"]
+      "command": "python3",
+      "args": ["/absolute/path/to/command/server.py"]
     }
   }
 }
@@ -109,12 +109,13 @@ pip3 install -r requirements.txt
 python3 server.py
 ```
 
-**Command Server (Node.js)**:
+**Command Server (Python)**:
 ```bash
 cd command
-npm install
-npm run build
-npm start
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip3 install -r requirements.txt
+python3 server.py
 ```
 
 ## Learn More
