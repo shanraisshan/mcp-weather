@@ -1,0 +1,1 @@
+# MCP Weather Server for Karachi (COMMAND)
