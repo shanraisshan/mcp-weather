@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 import asyncio
 import httpx
+import json
 from typing import Any
 from mcp.server import Server
-from mcp.server.sse import SseServerTransport
 from mcp.types import Tool, TextContent
 import uvicorn
 from starlette.applications import Starlette
 from starlette.routing import Route
+from starlette.responses import JSONResponse, StreamingResponse
+from starlette.requests import Request
 
 # Karachi coordinates
 KARACHI_COORDS = {
@@ -106,7 +108,6 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                 "weather_code": current["weather_code"]
             }
 
-            import json
             return [TextContent(
                 type="text",
                 text=json.dumps(weather_info, indent=2)
@@ -120,19 +121,8 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
     raise ValueError(f"Unknown tool: {name}")
 
 
-async def handle_sse(request):
-    """Handle SSE connection for MCP."""
-    async with SseServerTransport("/messages") as transport:
-        await mcp_server.run(
-            transport.read_stream,
-            transport.write_stream,
-            mcp_server.create_initialization_options()
-        )
-
-
-async def handle_root(request):
+async def handle_root(request: Request):
     """Handle root endpoint for health check."""
-    from starlette.responses import JSONResponse
     return JSONResponse({
         "status": "running",
         "server": "mcp-weather",
@@ -145,15 +135,48 @@ async def handle_root(request):
     })
 
 
+# Import and create SSE transport after server is defined
+from mcp.server.sse import SseServerTransport
+from starlette.routing import Mount
+
+sse_transport = SseServerTransport("/sse/messages")
+
+
+async def handle_sse_connection(request: Request):
+    """Handle SSE GET connection."""
+    scope = request.scope
+    receive = request.receive
+    send = request._send
+
+    # SSE connection
+    async with sse_transport.connect_sse(scope, receive, send) as (read_stream, write_stream):
+        await mcp_server.run(
+            read_stream,
+            write_stream,
+            mcp_server.create_initialization_options()
+        )
+
+
+async def handle_sse_messages(request: Request):
+    """Handle POST messages to SSE endpoint."""
+    scope = request.scope
+    receive = request.receive
+    send = request._send
+
+    await sse_transport.handle_post_message(scope, receive, send)
+
+
 # Create Starlette app
 app = Starlette(
     routes=[
         Route("/", endpoint=handle_root),
-        Route("/sse", endpoint=handle_sse),
+        Route("/sse", endpoint=handle_sse_connection, methods=["GET"]),
+        Route("/sse/messages", endpoint=handle_sse_messages, methods=["POST"]),
     ]
 )
 
 
 if __name__ == "__main__":
     print("Starting Karachi Weather MCP HTTP Server on http://localhost:8003")
+    print("SSE endpoint: http://localhost:8003/sse")
     uvicorn.run(app, host="0.0.0.0", port=8003)

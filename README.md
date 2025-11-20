@@ -36,7 +36,9 @@ This repository provides two MCP server implementations:
 {
   "mcpServers": {
     "weather": {
-      "url": "http://localhost:8003/sse"
+      "transport": "http",
+      "url": "http://localhost:8003/sse",
+      "description": "Karachi weather data from Open-Meteo API"
     }
   }
 }

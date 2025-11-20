@@ -48,10 +48,56 @@ Add this configuration to your Claude Desktop config file:
 {
   "mcpServers": {
     "weather": {
-      "url": "http://localhost:8003/sse"
+      "transport": "http",
+      "url": "http://localhost:8003/sse",
+      "description": "Karachi weather data from Open-Meteo API"
     }
   }
 }
+```
+
+### For Claude Code CLI
+
+**Method 1: Using CLI Command (Recommended)**
+
+First, make sure the MCP server is running:
+```bash
+python3 server.py
+```
+
+Then add the MCP server using the Claude CLI:
+```bash
+claude mcp add --transport http weather "http://localhost:8003/sse"
+```
+
+**Method 2: Manual Configuration**
+
+Alternatively, create or edit the MCP configuration file:
+
+**MacOS/Linux**: `~/.config/claude-code/mcp.json`
+
+**Windows**: `%APPDATA%\claude-code\mcp.json`
+
+```json
+{
+  "mcpServers": {
+    "weather": {
+      "transport": "http",
+      "url": "http://localhost:8003/sse",
+      "description": "Karachi weather data from Open-Meteo API"
+    }
+  }
+}
+```
+
+**Usage**:
+1. Make sure the MCP server is running (`python3 server.py`)
+2. The `get_karachi_weather` tool will be available automatically in Claude Code CLI
+3. Ask Claude: "What's the weather in Karachi?" and it will use the MCP tool
+
+**Verify Installation**:
+```bash
+claude mcp list
 ```
 
 ### For Other MCP Clients
