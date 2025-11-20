@@ -1,15 +1,8 @@
 #!/usr/bin/env python3
-import asyncio
+"""MCP Weather Server for Karachi using FastMCP."""
 import httpx
-import json
 from typing import Any
-from mcp.server import Server
-from mcp.types import Tool, TextContent
-import uvicorn
-from starlette.applications import Starlette
-from starlette.routing import Route
-from starlette.responses import JSONResponse, StreamingResponse
-from starlette.requests import Request
+from fastmcp import FastMCP
 
 # Karachi coordinates
 KARACHI_COORDS = {
@@ -44,6 +37,9 @@ WEATHER_CODES = {
     99: "Thunderstorm with heavy hail"
 }
 
+# Create FastMCP server
+mcp = FastMCP("mcp-weather")
+
 
 def interpret_weather_code(code: int) -> str:
     """Convert weather code to human-readable description."""
@@ -67,116 +63,46 @@ async def fetch_weather() -> dict[str, Any]:
         return response.json()
 
 
-# Create MCP server
-mcp_server = Server("mcp-weather")
+@mcp.tool()
+async def get_karachi_weather() -> str:
+    """
+    Get the current weather conditions for Karachi, Pakistan.
 
+    Returns temperature, humidity, wind speed, precipitation, and weather conditions.
+    """
+    try:
+        weather_data = await fetch_weather()
+        current = weather_data["current"]
 
-@mcp_server.list_tools()
-async def list_tools() -> list[Tool]:
-    """List available tools."""
-    return [
-        Tool(
-            name="get_karachi_weather",
-            description="Get the current weather conditions for Karachi, Pakistan. "
-                       "Returns temperature, humidity, wind speed, and weather conditions.",
-            inputSchema={
-                "type": "object",
-                "properties": {},
-                "required": []
-            }
-        )
-    ]
+        weather_info = {
+            "location": "Karachi, Pakistan",
+            "timestamp": current["time"],
+            "temperature": f"{current['temperature_2m']}°C",
+            "feels_like": f"{current['apparent_temperature']}°C",
+            "humidity": f"{current['relative_humidity_2m']}%",
+            "wind_speed": f"{current['wind_speed_10m']} km/h",
+            "precipitation": f"{current['precipitation']} mm",
+            "conditions": interpret_weather_code(current["weather_code"]),
+            "weather_code": current["weather_code"]
+        }
 
+        # Format as readable text
+        result = f"""
+🌍 **{weather_info['location']}**
+📅 {weather_info['timestamp']}
 
-@mcp_server.call_tool()
-async def call_tool(name: str, arguments: dict) -> list[TextContent]:
-    """Handle tool calls."""
-    if name == "get_karachi_weather":
-        try:
-            weather_data = await fetch_weather()
-            current = weather_data["current"]
+🌡️ Temperature: {weather_info['temperature']} (feels like {weather_info['feels_like']})
+☁️ Conditions: {weather_info['conditions']}
+💧 Humidity: {weather_info['humidity']}
+💨 Wind Speed: {weather_info['wind_speed']}
+🌧️ Precipitation: {weather_info['precipitation']}
+"""
+        return result.strip()
 
-            weather_info = {
-                "location": "Karachi, Pakistan",
-                "timestamp": current["time"],
-                "temperature": f"{current['temperature_2m']}°C",
-                "feels_like": f"{current['apparent_temperature']}°C",
-                "humidity": f"{current['relative_humidity_2m']}%",
-                "wind_speed": f"{current['wind_speed_10m']} km/h",
-                "precipitation": f"{current['precipitation']} mm",
-                "conditions": interpret_weather_code(current["weather_code"]),
-                "weather_code": current["weather_code"]
-            }
-
-            return [TextContent(
-                type="text",
-                text=json.dumps(weather_info, indent=2)
-            )]
-        except Exception as e:
-            return [TextContent(
-                type="text",
-                text=f"Error fetching weather: {str(e)}"
-            )]
-
-    raise ValueError(f"Unknown tool: {name}")
-
-
-async def handle_root(request: Request):
-    """Handle root endpoint for health check."""
-    return JSONResponse({
-        "status": "running",
-        "server": "mcp-weather",
-        "version": "1.0.0",
-        "endpoints": {
-            "sse": "/sse",
-            "health": "/"
-        },
-        "tools": ["get_karachi_weather"]
-    })
-
-
-# Import and create SSE transport after server is defined
-from mcp.server.sse import SseServerTransport
-from starlette.routing import Mount
-
-sse_transport = SseServerTransport("/sse/messages")
-
-
-async def handle_sse_connection(request: Request):
-    """Handle SSE GET connection."""
-    scope = request.scope
-    receive = request.receive
-    send = request._send
-
-    # SSE connection
-    async with sse_transport.connect_sse(scope, receive, send) as (read_stream, write_stream):
-        await mcp_server.run(
-            read_stream,
-            write_stream,
-            mcp_server.create_initialization_options()
-        )
-
-
-async def handle_sse_messages(request: Request):
-    """Handle POST messages to SSE endpoint."""
-    scope = request.scope
-    receive = request.receive
-    send = request._send
-
-    await sse_transport.handle_post_message(scope, receive, send)
-
-
-# Create Starlette app
-app = Starlette(
-    routes=[
-        Route("/", endpoint=handle_root),
-        Route("/sse", endpoint=handle_sse_connection, methods=["GET"]),
-        Route("/sse/messages", endpoint=handle_sse_messages, methods=["POST"]),
-    ]
-)
+    except Exception as e:
+        return f"Error fetching weather: {str(e)}"
 
 
 if __name__ == "__main__":
-    print("Starting Karachi Weather MCP HTTP Server on http://localhost:8003")
-    print("SSE endpoint: http://localhost:8003/sse")
-    uvicorn.run(app, host="0.0.0.0", port=8003)
+    # Run the server on port 8003
+    mcp.run(transport="sse", port=8003, host="0.0.0.0")
