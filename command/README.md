@@ -61,41 +61,168 @@ Add this configuration to your Claude Desktop config file:
 
 ### For Claude Code CLI
 
+Claude Code supports stdio MCP servers with three configuration scopes. This server runs as a subprocess using stdio transport.
+
+**Prerequisites**:
+- Claude Code CLI installed
+- Python dependencies installed: `pip3 install -r requirements.txt`
+
 **Method 1: Using CLI Command (Recommended)**
 
-Add the MCP server using the Claude CLI:
+Add the MCP server using the Claude CLI with stdio transport:
+
 ```bash
-claude mcp add weather python3 /absolute/path/to/mcp-weather/command/server.py
+# Local scope (default - personal development)
+claude mcp add --transport stdio weather -- python3 /absolute/path/to/mcp-weather/command/server.py
+
+# Project scope (shared via .mcp.json in project root)
+claude mcp add --transport stdio weather --scope project -- python3 /absolute/path/to/mcp-weather/command/server.py
+
+# User scope (available across all projects)
+claude mcp add --transport stdio weather --scope user -- python3 /absolute/path/to/mcp-weather/command/server.py
 ```
 
-**Method 2: Manual Configuration**
+**Important**: The double dash (`--`) separates Claude's flags from the server command.
 
-Alternatively, create or edit the MCP configuration file:
+**Using Virtual Environment**:
 
-**MacOS/Linux**: `~/.claude/mcp.json`
+If using a virtual environment, specify the full Python path:
 
-**Windows**: `%APPDATA%\claude\mcp.json`
+```bash
+claude mcp add --transport stdio weather -- /absolute/path/to/mcp-weather/command/venv/bin/python3 /absolute/path/to/mcp-weather/command/server.py
+```
+
+**Method 2: Manual Configuration (Project Scope)**
+
+Create `.mcp.json` in your project root:
 
 ```json
 {
   "mcpServers": {
     "weather": {
       "command": "python3",
-      "args": ["/absolute/path/to/mcp-weather/command/server.py"],
-      "description": "Karachi weather data from Open-Meteo API"
+      "args": ["/absolute/path/to/mcp-weather/command/server.py"]
     }
   }
 }
 ```
 
-**Usage**:
-1. The `get_karachi_weather` tool will be available automatically in Claude Code CLI
-2. Ask Claude: "What's the weather in Karachi?" and it will use the MCP tool
+This configuration will be shared with your team via version control.
 
-**Verify Installation**:
+**Configuration Scopes**:
+
+| Scope | Use Case | Location |
+|-------|----------|----------|
+| **Local** | Personal development, experimental configs | User settings |
+| **Project** | Team-shared configuration | `.mcp.json` in project root |
+| **User** | Personal utilities across all projects | User settings |
+
+**Scope Precedence**: Local > Project > User
+
+**Usage**:
+1. The `get_karachi_weather` tool will be available automatically
+2. Ask Claude: "What's the weather in Karachi?"
+3. Or use slash command in Claude Code: `/mcp` to view available tools
+
+**Management Commands**:
+```bash
+# List all configured servers
+claude mcp list
+
+# Get details for specific server
+claude mcp get weather
+
+# Remove a server
+claude mcp remove weather
+
+# Check server status (within Claude Code)
+/mcp
+```
+
+**Verification**:
 ```bash
 claude mcp list
 ```
+
+You should see "weather" in the list of configured servers.
+
+### For Augment Code
+
+Augment Code supports MCP servers and provides multiple methods to configure them. This command-based server uses stdio transport.
+
+**Prerequisites**:
+- Augment Code extension installed in VS Code
+- Python dependencies installed: `pip3 install -r requirements.txt`
+
+**Method 1: Settings Panel (Recommended)**
+
+1. Open the Augment panel in VS Code
+2. Click the **options menu** (hamburger icon) in the upper right
+3. Select **Settings**
+4. Scroll to the **MCP servers** section
+5. Click **"+ Add MCP"** (for local servers)
+6. Fill in the configuration:
+   - **Name**: `weather`
+   - **Command**: `python3`
+   - **Args**: Add argument `/absolute/path/to/mcp-weather/command/server.py`
+7. Click **Save**
+
+**Method 2: JSON Import**
+
+1. Open Augment Settings (gear icon)
+2. Click **"Import from JSON"** in the MCP section
+3. Paste this configuration:
+
+```json
+{
+  "mcpServers": {
+    "weather": {
+      "command": "python3",
+      "args": ["/absolute/path/to/mcp-weather/command/server.py"]
+    }
+  }
+}
+```
+
+4. Click **Save**
+
+**Note**: Replace `/absolute/path/to/mcp-weather/command/server.py` with the actual absolute path to the server.py file on your system.
+
+**Method 3: Using Virtual Environment Path**
+
+If using a virtual environment, specify the full Python path:
+
+```json
+{
+  "mcpServers": {
+    "weather": {
+      "command": "/absolute/path/to/mcp-weather/command/venv/bin/python3",
+      "args": ["/absolute/path/to/mcp-weather/command/server.py"]
+    }
+  }
+}
+```
+
+**Usage with Augment Code**:
+
+1. The `get_karachi_weather` tool will be available in Augment Agent
+2. Ask questions like:
+   - "What's the current weather in Karachi?"
+   - "Check the weather conditions in Karachi"
+   - "Tell me the temperature in Karachi"
+
+**Verification**:
+
+- Check the MCP servers list in Settings to confirm "weather" appears
+- Look for the weather tool in Augment Agent's available tools
+- Use the "..." menu next to the server name to view status or logs
+
+**Troubleshooting**:
+
+- Ensure all dependencies are installed: `pip3 install -r requirements.txt`
+- Verify the absolute path to server.py is correct
+- Check the Augment logs if the server fails to start
+- Use the virtual environment Python path if you have dependency issues
 
 ### For VSCode GitHub Copilot
 
