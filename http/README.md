@@ -2,15 +2,6 @@
 
 A Python-based Model Context Protocol (MCP) server that fetches current weather data for Karachi, Pakistan using the Open-Meteo API. Built with FastMCP 2.3+ using the modern Streamable HTTP transport.
 
-## Features
-
-- **Streamable HTTP** MCP server (modern MCP standard)
-- Compatible with Google Antigravity IDE, Claude Desktop, Claude Code CLI, Augment Code, and VS Code Copilot
-- Get current weather conditions for Karachi
-- Returns temperature, humidity, wind speed, precipitation, and weather conditions
-- Uses free Open-Meteo API (no API key required)
-- Built with FastMCP 2.3+ for optimal performance
-
 ## Installation
 
 ```bash
@@ -25,11 +16,7 @@ source venv/bin/activate
 
 # Install Python dependencies
 pip3 install -r requirements.txt
-```
 
-## Running the Server
-
-```bash
 # Make sure your virtual environment is activated first
 python3 server.py
 ```
@@ -38,42 +25,11 @@ The server will start on `http://localhost:8003`
 
 ## Usage in Your Project
 
-### For Claude Desktop
+### 🤖 Claude Code CLI
 
-Add this configuration to your Claude Desktop config file:
-
-**MacOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-
-**Windows**: `%APPDATA%/Claude/claude_desktop_config.json`
-
-```json
-{
-  "mcpServers": {
-    "weather": {
-      "serverUrl": "http://localhost:8003/mcp",
-      "description": "Karachi weather data from Open-Meteo API"
-    }
-  }
-}
-```
-
-**Note**: This uses the modern Streamable HTTP transport. Make sure you're running the server with FastMCP 2.3+ and `transport="http"` (which is the default in this project).
-
-### For Claude Code CLI
-
-Claude Code supports HTTP MCP servers with three configuration scopes. Make sure the server is running before adding it.
-
-**Prerequisites**:
-- Claude Code CLI installed
-- FastMCP 2.3+ installed: `pip install --upgrade fastmcp`
-- Server running: `python3 server.py` (on `http://localhost:8003`)
+![](/!/mcp-http-claude-code.png)
 
 **Method 1: Using CLI Command (Recommended)**
-
-First, make sure the MCP server is running:
-```bash
-python3 server.py
-```
 
 Then add the MCP server using the Claude CLI:
 
@@ -87,8 +43,6 @@ claude mcp add weather --scope project http://localhost:8003/mcp
 # User scope (available across all projects)
 claude mcp add weather --scope user http://localhost:8003/mcp
 ```
-
-**Note**: This uses Streamable HTTP transport. Make sure your server is running with FastMCP 2.3+ and `transport="http"`.
 
 **Method 2: Manual Configuration (Project Scope)**
 
@@ -111,24 +65,6 @@ Also in .claude/settings.json:
 }
 ```
 
-This configuration will be shared with your team via version control.
-
-**Configuration Scopes**:
-
-| Scope | Use Case | Location |
-|-------|----------|----------|
-| **Local** | Personal development, experimental configs | User settings |
-| **Project** | Team-shared configuration | `.mcp.json` in project root |
-| **User** | Personal utilities across all projects | User settings |
-
-**Scope Precedence**: Local > Project > User
-
-**Usage**:
-1. Make sure the MCP server is running: `python3 server.py`
-2. The `get_karachi_weather` tool will be available automatically
-3. Ask Claude: "What's the weather in Karachi?"
-4. Or use slash command in Claude Code: `/mcp` to view available tools
-
 **Management Commands**:
 ```bash
 # List all configured servers
@@ -144,14 +80,9 @@ claude mcp remove weather
 /mcp
 ```
 
-**Verification**:
-```bash
-claude mcp list
-```
+### 🤖 Augment Code
 
-You should see "weather" in the list of configured servers.
-
-### For Augment Code
+![](/!/mcp-http-augment.png)
 
 Augment Code supports MCP servers and provides three methods to configure them. Make sure the HTTP server is running on `http://localhost:8003` before configuration.
 
@@ -205,7 +136,9 @@ Augment Code supports MCP servers and provides three methods to configure them. 
 
 **Note**: Ensure the HTTP server (`python3 server.py`) is running before using the tool.
 
-### For VSCode GitHub Copilot
+### 🤖 VSCode GitHub Copilot
+
+![](/!/mcp-http-copilot.png)
 
 GitHub Copilot in VSCode supports MCP servers starting from **VS Code 1.102**. This enables Copilot to access real-time weather data.
 
@@ -270,7 +203,9 @@ Create or edit `.vscode/mcp.json` in your workspace:
 
 **Security Note**: VS Code will display a trust confirmation when adding the server. Only add MCP servers from trusted sources as they can execute code on your machine.
 
-### For Google Antigravity IDE
+### 🤖 Google Antigravity IDE
+
+![](/!/mcp-http-antigravity.png)
 
 Google Antigravity is an agent-first IDE powered by Gemini 3 Pro. It supports MCP servers through both STDIO (local processes) and Streamable HTTP (remote servers) transports.
 
@@ -422,13 +357,3 @@ The server provides one tool:
 ## API Used
 
 This server uses the free [Open-Meteo API](https://open-meteo.com/) which requires no API key.
-
-## Technical Details
-
-- Built with FastMCP 2.3+ (Python MCP framework)
-- Uses **Streamable HTTP** transport (modern MCP standard)
-- Async/await for efficient HTTP requests
-- Runs on uvicorn ASGI server
-- Compatible with all modern MCP clients including Google Antigravity IDE
-
-**Legacy Client Compatibility**: This server uses Streamable HTTP (the modern MCP standard). If you need to support an older client that requires the deprecated SSE transport, modify `server.py` line 110 to use `transport="sse"` instead of `transport="http"`, and update all client configurations to use `http://localhost:8003/sse` as the endpoint. Note that SSE is deprecated and Streamable HTTP should be used for all new deployments.
