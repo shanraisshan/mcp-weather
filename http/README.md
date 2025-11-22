@@ -1,13 +1,15 @@
-# MCP Weather Server for Karachi (HTTP)
+# MCP Weather Server for Karachi (Streamable HTTP)
 
-A Python-based Model Context Protocol (MCP) HTTP server that fetches current weather data for Karachi, Pakistan using the Open-Meteo API.
+A Python-based Model Context Protocol (MCP) server that fetches current weather data for Karachi, Pakistan using the Open-Meteo API. Built with FastMCP 2.3+ using the modern Streamable HTTP transport.
 
 ## Features
 
-- HTTP-based MCP server (not command-line based)
+- **Streamable HTTP** MCP server (modern MCP standard)
+- Compatible with Google Antigravity IDE, Claude Desktop, Claude Code CLI, Augment Code, and VS Code Copilot
 - Get current weather conditions for Karachi
 - Returns temperature, humidity, wind speed, precipitation, and weather conditions
 - Uses free Open-Meteo API (no API key required)
+- Built with FastMCP 2.3+ for optimal performance
 
 ## Installation
 
@@ -48,13 +50,14 @@ Add this configuration to your Claude Desktop config file:
 {
   "mcpServers": {
     "weather": {
-      "transport": "http",
-      "url": "http://localhost:8003/sse",
+      "serverUrl": "http://localhost:8003/mcp",
       "description": "Karachi weather data from Open-Meteo API"
     }
   }
 }
 ```
+
+**Note**: This uses the modern Streamable HTTP transport. Make sure you're running the server with FastMCP 2.3+ and `transport="http"` (which is the default in this project).
 
 ### For Claude Code CLI
 
@@ -62,6 +65,7 @@ Claude Code supports HTTP MCP servers with three configuration scopes. Make sure
 
 **Prerequisites**:
 - Claude Code CLI installed
+- FastMCP 2.3+ installed: `pip install --upgrade fastmcp`
 - Server running: `python3 server.py` (on `http://localhost:8003`)
 
 **Method 1: Using CLI Command (Recommended)**
@@ -75,16 +79,16 @@ Then add the MCP server using the Claude CLI:
 
 ```bash
 # Local scope (default - personal development)
-claude mcp add --transport sse weather http://localhost:8003/sse
+claude mcp add weather http://localhost:8003/mcp
 
 # Project scope (shared via .mcp.json in project root)
-claude mcp add --transport sse weather --scope project http://localhost:8003/sse
+claude mcp add weather --scope project http://localhost:8003/mcp
 
 # User scope (available across all projects)
-claude mcp add --transport sse weather --scope user http://localhost:8003/sse
+claude mcp add weather --scope user http://localhost:8003/mcp
 ```
 
-**Note**: Use SSE transport for Claude CLI. HTTP transport is not currently supported by the Claude CLI.
+**Note**: This uses Streamable HTTP transport. Make sure your server is running with FastMCP 2.3+ and `transport="http"`.
 
 **Method 2: Manual Configuration (Project Scope)**
 
@@ -94,8 +98,7 @@ Create `.mcp.json` in your project root:
 {
   "mcpServers": {
     "weather": {
-      "type": "sse",
-      "url": "http://localhost:8003/sse"
+      "url": "http://localhost:8003/mcp"
     }
   }
 }
@@ -165,8 +168,8 @@ Augment Code supports MCP servers and provides three methods to configure them. 
 5. Click **"+ Add remote MCP"**
 6. Fill in the configuration:
    - **Name**: `weather`
-   - **Connection type**: `SSE`
-   - **Base URL**: `http://localhost:8003/sse`
+   - **Connection type**: `HTTP` (or `Streamable HTTP` if available)
+   - **Base URL**: `http://localhost:8003/mcp`
 7. Click **Save**
 
 **Method 2: JSON Import**
@@ -179,8 +182,7 @@ Augment Code supports MCP servers and provides three methods to configure them. 
 {
   "mcpServers": {
     "weather": {
-      "url": "http://localhost:8003/sse",
-      "type": "sse"
+      "url": "http://localhost:8003/mcp"
     }
   }
 }
@@ -221,8 +223,8 @@ GitHub Copilot in VSCode supports MCP servers starting from **VS Code 1.102**. T
 4. Choose **"Workspace"** or **"Global"** scope
 5. Fill in the configuration:
    - **Name**: `weather`
-   - **Type**: `http` or `sse`
-   - **URL**: `http://localhost:8003/sse`
+   - **Type**: `http` (Streamable HTTP)
+   - **URL**: `http://localhost:8003/mcp`
 
 **Method 2: Manual Configuration**
 
@@ -232,8 +234,8 @@ Create or edit `.vscode/mcp.json` in your workspace:
 {
   "servers": {
     "weather": {
-      "type": "sse",
-      "url": "http://localhost:8003/sse"
+      "type": "http",
+      "url": "http://localhost:8003/mcp"
     }
   }
 }
@@ -268,15 +270,138 @@ Create or edit `.vscode/mcp.json` in your workspace:
 
 **Security Note**: VS Code will display a trust confirmation when adding the server. Only add MCP servers from trusted sources as they can execute code on your machine.
 
+### For Google Antigravity IDE
+
+Google Antigravity is an agent-first IDE powered by Gemini 3 Pro. It supports MCP servers through both STDIO (local processes) and Streamable HTTP (remote servers) transports.
+
+**Prerequisites**:
+- Google Antigravity IDE installed (Public Preview)
+- FastMCP 2.3+ installed: `pip install --upgrade fastmcp`
+- Server running: `python3 server.py` (on `http://localhost:8003`)
+
+**Step-by-Step Configuration**:
+
+1. **Install/Update FastMCP**:
+   ```bash
+   # Activate your virtual environment first
+   source venv/bin/activate  # On macOS/Linux
+   # venv\Scripts\activate  # On Windows
+
+   # Upgrade to FastMCP 2.3+ (required for Streamable HTTP)
+   pip install --upgrade fastmcp
+   ```
+
+2. **Start the MCP Server**:
+   ```bash
+   python3 server.py
+   ```
+   Ensure the server is running on `http://localhost:8003`
+
+3. **Open MCP Configuration in Antigravity**:
+   - Click on the **Agent** session in your workspace
+   - Select the **"..."** (more options) dropdown at the top of the editor's side panel
+   - Choose **"MCP Servers"** to open the MCP Store
+
+4. **Add Custom MCP Server**:
+   - Click **"Manage MCP Servers"** at the top of the MCP Store
+   - Select **"View raw config"** in the main tab
+   - This opens the `mcp_config.json` file for editing
+
+5. **Configure the Weather Server**:
+
+   Add this configuration to your `mcp_config.json`:
+
+   ```json
+   {
+     "mcpServers": {
+       "weather": {
+         "serverUrl": "http://localhost:8003/mcp",
+         "description": "Karachi weather data from Open-Meteo API"
+       }
+     }
+   }
+   ```
+
+   **Alternative: If you have multiple MCP servers already configured**:
+
+   ```json
+   {
+     "mcpServers": {
+       "firebase-mcp-server": {
+         "command": "npx",
+         "args": ["-y", "firebase-tools@14.20.0", "mcp"]
+       },
+       "weather": {
+         "serverUrl": "http://localhost:8003/mcp",
+         "description": "Karachi weather data from Open-Meteo API"
+       }
+     }
+   }
+   ```
+
+6. **Save the Configuration**:
+   - Save the `mcp_config.json` file
+   - Antigravity will automatically detect and load the new MCP server
+   - Click **Refresh** in the "Manage MCP servers" panel to reload the configuration
+
+**Usage with Gemini 3 Agent**:
+
+Once configured, the Gemini 3 agent in Antigravity can automatically discover and use the weather tool:
+
+1. Open a new chat with the Gemini 3 agent
+2. The `get_karachi_weather` tool will be available in the agent's tool picker
+3. Ask questions like:
+   - "What's the current weather in Karachi?"
+   - "Check the weather conditions in Karachi"
+   - "Tell me the temperature and humidity in Karachi"
+4. The Gemini 3 agent will automatically call the MCP server to fetch real-time weather data
+
+**Verification**:
+
+1. After saving the configuration, go back to **MCP Servers** in the Agent pane
+2. Verify that "weather" appears in the list of configured servers
+3. Check that the server status shows as "Connected" or "Running"
+4. Test by asking the Gemini 3 agent: "What's the weather in Karachi?"
+
+**Troubleshooting**:
+
+- **Server not connecting**: Ensure `python3 server.py` is running and accessible at `http://localhost:8003`
+- **Tool not appearing**: Refresh the MCP configuration by restarting Antigravity or reloading the window
+- **Gemini 3 not using the tool**: Explicitly mention "Check the weather in Karachi" to prompt tool usage
+- **Configuration errors**: Validate your JSON syntax in `mcp_config.json` - missing commas or brackets can cause issues
+- **Port conflicts**: If port 8003 is in use, modify `server.py` to use a different port and update the `serverUrl` accordingly
+
+**Configuration Scopes**:
+
+Google Antigravity uses a single global `mcp_config.json` file accessed through the "View raw config" option. All MCP servers configured here are available across all projects within Antigravity.
+
+**Transport Support**:
+
+| Transport Type | Use Case | Configuration Key |
+|----------------|----------|-------------------|
+| **STDIO** | Local command-based servers | `"command"` + `"args"` |
+| **Streamable HTTP** | Remote or localhost HTTP servers (recommended) | `"serverUrl"` |
+
+**Important Notes**:
+- This server uses **Streamable HTTP** (FastMCP 2.3+), the new MCP standard recommended for all deployments
+- The correct URL is `http://localhost:8003/mcp` (FastMCP's Streamable HTTP endpoint)
+- Antigravity automatically negotiates the Streamable HTTP protocol with compatible servers
+- Make sure to upgrade FastMCP to version 2.3+ for Streamable HTTP support
+
+**Security Note**: Only add MCP servers from trusted sources, as they can execute code and access data within your Antigravity environment.
+
 ### For Other MCP Clients
 
-Connect to the HTTP server at:
-- **Base URL**: `http://localhost:8003`
-- **SSE Endpoint**: `http://localhost:8003/sse`
+Connect to the Streamable HTTP server at:
+- **Base URL**: `http://localhost:8003/mcp`
+- **Transport**: Streamable HTTP (MCP standard)
+- **Requires**: FastMCP 2.3+ or compatible MCP client with Streamable HTTP support
 
 The server provides one tool:
 
 - `get_karachi_weather`: Fetches current weather for Karachi
+
+**Legacy Support**: If you encounter a client that doesn't support Streamable HTTP yet, you can temporarily run the server with SSE by modifying `server.py` line 110 to use `transport="sse"` and updating client URLs to `http://localhost:8003/sse`. However, Streamable HTTP is the modern standard and is recommended for all deployments.
 
 ## Example Response
 
@@ -300,7 +425,10 @@ This server uses the free [Open-Meteo API](https://open-meteo.com/) which requir
 
 ## Technical Details
 
-- Built with Python MCP SDK
-- Uses Server-Sent Events (SSE) for communication
+- Built with FastMCP 2.3+ (Python MCP framework)
+- Uses **Streamable HTTP** transport (modern MCP standard)
 - Async/await for efficient HTTP requests
 - Runs on uvicorn ASGI server
+- Compatible with all modern MCP clients including Google Antigravity IDE
+
+**Legacy Client Compatibility**: This server uses Streamable HTTP (the modern MCP standard). If you need to support an older client that requires the deprecated SSE transport, modify `server.py` line 110 to use `transport="sse"` instead of `transport="http"`, and update all client configurations to use `http://localhost:8003/sse` as the endpoint. Note that SSE is deprecated and Streamable HTTP should be used for all new deployments.

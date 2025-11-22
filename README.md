@@ -12,7 +12,7 @@ A collection of Model Context Protocol (MCP) servers that fetch current weather 
 - **MCP Client**: An application (like Claude Desktop) that connects to MCP servers to access their capabilities
 - **Transport Types**:
   - **stdio (command-based)**: Server runs as a subprocess, communicates via standard input/output
-  - **HTTP with SSE**: Server runs as an HTTP service, uses Server-Sent Events for communication
+  - **Streamable HTTP**: Server runs as an HTTP service, uses the modern MCP protocol for communication
 
 ### Benefits
 
@@ -27,7 +27,7 @@ This repository provides two MCP server implementations:
 
 ### 1. [HTTP Server (Python)](./http/)
 
-**Type**: HTTP with Server-Sent Events (SSE)
+**Type**: Streamable HTTP (FastMCP 2.3+)
 **Language**: Python
 **Port**: 8003
 **Best for**: Running as a standalone service, multiple clients, production deployments
@@ -36,8 +36,7 @@ This repository provides two MCP server implementations:
 {
   "mcpServers": {
     "weather": {
-      "transport": "http",
-      "url": "http://localhost:8003/sse",
+      "serverUrl": "http://localhost:8003/mcp",
       "description": "Karachi weather data from Open-Meteo API"
     }
   }
