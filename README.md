@@ -14,13 +14,6 @@ A collection of Model Context Protocol (MCP) servers that fetch current weather 
   - **stdio (command-based)**: Server runs as a subprocess, communicates via standard input/output
   - **Streamable HTTP**: Server runs as an HTTP service, uses the modern MCP protocol for communication
 
-### Benefits
-
-- Standardized way to extend LLM capabilities
-- Connect LLMs to databases, APIs, file systems, and more
-- Reusable across different MCP-compatible applications
-- Secure, controlled access to external resources
-
 ## Available Implementations
 
 This repository provides two MCP server implementations:
@@ -30,7 +23,6 @@ This repository provides two MCP server implementations:
 **Type**: Streamable HTTP (FastMCP 2.3+)
 **Language**: Python
 **Port**: 8003
-**Best for**: Running as a standalone service, multiple clients, production deployments
 
 ```json
 {
@@ -49,7 +41,6 @@ This repository provides two MCP server implementations:
 
 **Type**: stdio (command-based)
 **Language**: Python
-**Best for**: Local development, single client, simpler setup
 
 ```json
 {
@@ -64,36 +55,11 @@ This repository provides two MCP server implementations:
 
 [→ View Command Implementation Details](./command/)
 
-## Features
-
-Both implementations provide:
-
-- Current weather conditions for Karachi, Pakistan
-- Temperature, humidity, wind speed, and precipitation data
-- Human-readable weather condition descriptions
-- Free API (Open-Meteo) - no API key required
-
 ## Tool Available
 
 Both servers expose the same tool:
 
 - **`get_karachi_weather`**: Fetches current weather conditions for Karachi
-
-### Example Response
-
-```json
-{
-  "location": "Karachi, Pakistan",
-  "timestamp": "2025-01-20T10:30",
-  "temperature": "22.5°C",
-  "feels_like": "21.8°C",
-  "humidity": "65%",
-  "wind_speed": "15.2 km/h",
-  "precipitation": "0 mm",
-  "conditions": "Partly cloudy",
-  "weather_code": 2
-}
-```
 
 ## Quick Start
 
@@ -116,14 +82,3 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip3 install -r requirements.txt
 python3 server.py
 ```
-
-## Learn More
-
-- [MCP Documentation](https://modelcontextprotocol.io/)
-- [MCP Specification](https://spec.modelcontextprotocol.io/)
-- [Anthropic MCP Guide](https://docs.anthropic.com/claude/docs/model-context-protocol)
-- [Open-Meteo API](https://open-meteo.com/)
-
-## License
-
-MIT
