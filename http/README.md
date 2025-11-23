@@ -66,6 +66,7 @@ Create `.mcp.json` in your project root:
 {
   "mcpServers": {
     "weather": {
+      "type": "http",
       "url": "http://localhost:8003/mcp"
     }
   }

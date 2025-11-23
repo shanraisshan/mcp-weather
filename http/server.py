@@ -4,6 +4,7 @@ import httpx
 import os
 from typing import Any
 from fastmcp import FastMCP
+from starlette.responses import HTMLResponse
 
 # Karachi coordinates
 KARACHI_COORDS = {
@@ -40,6 +41,39 @@ WEATHER_CODES = {
 
 # Create FastMCP server
 mcp = FastMCP("mcp-weather")
+
+
+# Add a custom route for the home page
+@mcp.custom_route("/", ["GET"])
+async def home(request):
+    """Display a simple message on the home page."""
+    html_content = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>MCP Weather Server</title>
+        <style>
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                font-family: Arial, sans-serif;
+                background-color: #f5f5f5;
+            }
+            h1 {
+                font-size: 2.5rem;
+                color: #333;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>MCP weather is running.</h1>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
 
 
 def interpret_weather_code(code: int) -> str:
