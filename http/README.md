@@ -4,6 +4,8 @@ A Python-based Model Context Protocol (MCP) server that fetches current weather 
 
 ## Installation
 
+### Local Development
+
 ```bash
 python3 -m venv venv
 source venv/bin/activate
@@ -11,6 +13,31 @@ pip3 install -r requirements.txt
 python3 server.py
 ```
 The server will start on `http://localhost:8003`
+
+### Deploy to Render.com (Free Tier - needs nayapay card)
+
+1. **Fork or push this repository to GitHub**
+
+2. **Create a new Web Service on Render:**
+   - Go to [Render Dashboard](https://dashboard.render.com/)
+   - Click "New +" and select "Web Service"
+   - Connect your GitHub repository
+   - Configure the service:
+     - **Name**: `mcp-weather` (or your preferred name)
+     - **Region**: Choose your preferred region
+     - **Branch**: `main`
+     - **Root Directory**: `http`
+     - **Runtime**: `Python 3`
+     - **Build Command**: `pip install -r requirements.txt`
+     - **Start Command**: `python server.py`
+   - Click "Create Web Service"
+
+3. **Use your deployed server:**
+   - Once deployed, Render will provide you with a URL like: `https://mcp-weather-j5kl.onrender.com`
+   - Your MCP endpoint will be: `https://mcp-weather-j5kl.onrender.com/mcp`
+   - Update your MCP client configuration with this URL instead of `http://localhost:8003/mcp`
+
+**Note:** The free tier on Render may spin down after inactivity. The first request after inactivity may take 30-60 seconds to wake up the service.
 
 ## Usage in Your Project
 

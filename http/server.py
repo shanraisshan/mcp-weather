@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """MCP Weather Server for Karachi using FastMCP."""
 import httpx
+import os
 from typing import Any
 from fastmcp import FastMCP
 
@@ -104,7 +105,9 @@ async def get_karachi_weather() -> str:
 
 
 if __name__ == "__main__":
-    # Run the server on port 8003 with Streamable HTTP transport
+    # Run the server with Streamable HTTP transport
     # This is the recommended transport for MCP servers (FastMCP 2.3+)
     # Compatible with Google Antigravity, Claude Code, and other modern MCP clients
-    mcp.run(transport="http", port=8003, host="0.0.0.0")
+    # Use PORT from environment (Render) or default to 8003 for local development
+    port = int(os.getenv("PORT", "8003"))
+    mcp.run(transport="http", port=port, host="0.0.0.0")
