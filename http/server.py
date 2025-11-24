@@ -6,10 +6,15 @@ from typing import Any
 from fastmcp import FastMCP
 from starlette.responses import HTMLResponse
 
-# Karachi coordinates
+# City coordinates
 KARACHI_COORDS = {
     "lat": 24.8607,
     "lon": 67.0011
+}
+
+DUBAI_COORDS = {
+    "lat": 25.2048,
+    "lon": 55.2708
 }
 
 WEATHER_CODES = {
@@ -52,6 +57,7 @@ async def home(request):
     <html>
     <head>
         <title>MCP Weather Server</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
         <style>
             body {
                 display: flex;
@@ -81,15 +87,15 @@ def interpret_weather_code(code: int) -> str:
     return WEATHER_CODES.get(code, f"Unknown weather code: {code}")
 
 
-async def fetch_weather() -> dict[str, Any]:
-    """Fetch current weather data for Karachi from Open-Meteo API."""
+async def fetch_weather(lat: float, lon: float, timezone: str) -> dict[str, Any]:
+    """Fetch current weather data from Open-Meteo API."""
     url = (
         f"https://api.open-meteo.com/v1/forecast"
-        f"?latitude={KARACHI_COORDS['lat']}"
-        f"&longitude={KARACHI_COORDS['lon']}"
+        f"?latitude={lat}"
+        f"&longitude={lon}"
         f"&current=temperature_2m,relative_humidity_2m,apparent_temperature,"
         f"precipitation,weather_code,wind_speed_10m"
-        f"&timezone=Asia/Karachi"
+        f"&timezone={timezone}"
     )
 
     async with httpx.AsyncClient() as client:
@@ -99,18 +105,66 @@ async def fetch_weather() -> dict[str, Any]:
 
 
 @mcp.tool()
-async def get_karachi_weather() -> str:
+async def get_karachi_weather_shayan() -> str:
     """
     Get the current weather conditions for Karachi, Pakistan.
 
     Returns temperature, humidity, wind speed, precipitation, and weather conditions.
     """
     try:
-        weather_data = await fetch_weather()
+        weather_data = await fetch_weather(
+            KARACHI_COORDS["lat"],
+            KARACHI_COORDS["lon"],
+            "Asia/Karachi"
+        )
         current = weather_data["current"]
 
         weather_info = {
             "location": "Karachi, Pakistan",
+            "timestamp": current["time"],
+            "temperature": f"{current['temperature_2m']}°C",
+            "feels_like": f"{current['apparent_temperature']}°C",
+            "humidity": f"{current['relative_humidity_2m']}%",
+            "wind_speed": f"{current['wind_speed_10m']} km/h",
+            "precipitation": f"{current['precipitation']} mm",
+            "conditions": interpret_weather_code(current["weather_code"]),
+            "weather_code": current["weather_code"]
+        }
+
+        # Format as readable text
+        result = f"""
+🌍 **{weather_info['location']}**
+📅 {weather_info['timestamp']}
+
+🌡️ Temperature: {weather_info['temperature']} (feels like {weather_info['feels_like']})
+☁️ Conditions: {weather_info['conditions']}
+💧 Humidity: {weather_info['humidity']}
+💨 Wind Speed: {weather_info['wind_speed']}
+🌧️ Precipitation: {weather_info['precipitation']}
+"""
+        return result.strip()
+
+    except Exception as e:
+        return f"Error fetching weather: {str(e)}"
+
+
+@mcp.tool()
+async def get_dubai_weather_shayan() -> str:
+    """
+    Get the current weather conditions for Dubai, UAE.
+
+    Returns temperature, humidity, wind speed, precipitation, and weather conditions.
+    """
+    try:
+        weather_data = await fetch_weather(
+            DUBAI_COORDS["lat"],
+            DUBAI_COORDS["lon"],
+            "Asia/Dubai"
+        )
+        current = weather_data["current"]
+
+        weather_info = {
+            "location": "Dubai, UAE",
             "timestamp": current["time"],
             "temperature": f"{current['temperature_2m']}°C",
             "feels_like": f"{current['apparent_temperature']}°C",

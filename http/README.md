@@ -7,6 +7,7 @@ A Python-based Model Context Protocol (MCP) server that fetches current weather 
 ### Local Development
 
 ```bash
+cd http
 python3 -m venv venv
 source venv/bin/activate
 pip3 install -r requirements.txt
