@@ -40,6 +40,25 @@ The server will start on `http://localhost:8003`
 
 **Note:** The free tier on Render may spin down after inactivity. The first request after inactivity may take 30-60 seconds to wake up the service.
 
+### Keeping Your Server Alive with Cron-Job.org (shayanrais.gt)
+
+To prevent your Render free tier server from spinning down after 15 minutes of inactivity, you can use a free cron service to ping it every 14 minutes:
+
+1. **Go to [cron-job.org](https://cron-job.org/)** and create a free account
+
+2. **Create a new cron job:**
+   - Click "Create cronjob" in your dashboard
+   - **Title**: `Keep MCP Weather Server Alive`
+   - **URL**: `https://mcp-weather-j5kl.onrender.com/` (replace with your actual Render URL)
+   - **Schedule**: Select "Every 14 minutes"
+     - Or use custom expression: `*/14 * * * *`
+   - **Request method**: GET
+   - **Enabled**: Yes (check the box)
+
+3. **Save the cron job** and it will start pinging your server automatically
+
+Your server's home endpoint (`/`) is perfect for this purpose - it returns a simple HTML page confirming the server is running, which will keep the server active without consuming significant resources.
+
 ## Usage in Your Project
 
 ### 🤖 Claude Code CLI
