@@ -1,6 +1,6 @@
-# MCP Weather Server for Karachi
+# MCP Weather Server for 195 Countries
 
-A collection of Model Context Protocol (MCP) servers that fetch current weather data for Karachi, Pakistan using the Open-Meteo API.
+A collection of Model Context Protocol (MCP) servers that fetch current weather data for 195 countries using the Open-Meteo API.
 
 ## What is MCP?
 
@@ -33,9 +33,9 @@ This repository provides two MCP server implementations:
 ```json
 {
   "mcpServers": {
-    "weather": {
+    "weather-mcp-shayan": {
       "serverUrl": "http://localhost:8003/mcp",
-      "description": "Karachi weather data from Open-Meteo API"
+      "description": "Weather data for 195 countries from Open-Meteo API"
     }
   }
 }
@@ -61,11 +61,11 @@ This repository provides two MCP server implementations:
 
 [→ View Command Implementation Details](./command/)
 
-## Tool Available
+## Tools Available
 
-Both servers expose the same tool:
+Both servers expose 195 weather tools (one per country):
 
-- **`get_karachi_weather`**: Fetches current weather conditions for Karachi
+- **`get_{country}_weather_shayan`**: Fetches current weather for the specified country's capital (e.g., `get_india_weather_shayan`, `get_france_weather_shayan`)
 
 ## Quick Start
 
