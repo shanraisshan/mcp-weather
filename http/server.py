@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""MCP Weather Server using FastMCP - 193 Countries."""
+"""MCP Weather Server using FastMCP - 195 Countries."""
 import httpx
 import os
 from fastmcp import FastMCP

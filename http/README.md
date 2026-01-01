@@ -1,6 +1,6 @@
-# MCP Weather Server for Karachi (Streamable HTTP)
+# MCP Weather Server for 195 Countries (Streamable HTTP)
 
-A Python-based Model Context Protocol (MCP) server that fetches current weather data for Karachi, Pakistan using the Open-Meteo API. Built with FastMCP 2.3+ using the modern Streamable HTTP transport.
+A Python-based Model Context Protocol (MCP) server that fetches current weather data for all 195 UN member countries using the Open-Meteo API. Built with FastMCP 2.3+ using the modern Streamable HTTP transport.
 
 ## Installation
 
@@ -24,7 +24,7 @@ The server will start on `http://localhost:8003`
    - Click "New +" and select "Web Service"
    - Connect your GitHub repository
    - Configure the service:
-     - **Name**: `mcp-weather` (or your preferred name)
+     - **Name**: `weather-mcp-shayan` (or your preferred name)
      - **Region**: Choose your preferred region
      - **Branch**: `main`
      - **Root Directory**: `http`
@@ -69,13 +69,13 @@ Your server's home endpoint (`/`) is perfect for this purpose - it returns a sim
 
 ```bash
 # Local scope (default - personal development)
-claude mcp add weather http://localhost:8003/mcp
+claude mcp add weather-mcp-shayan http://localhost:8003/mcp
 
 # Project scope (shared via .mcp.json in project root)
-claude mcp add weather --scope project http://localhost:8003/mcp
+claude mcp add weather-mcp-shayan --scope project http://localhost:8003/mcp
 
 # User scope (available across all projects)
-claude mcp add weather --scope user http://localhost:8003/mcp
+claude mcp add weather-mcp-shayan --scope user http://localhost:8003/mcp
 ```
 
 **Method 2: Manual Configuration (Project Scope)**
@@ -85,7 +85,7 @@ Create `.mcp.json` in your project root:
 ```json
 {
   "mcpServers": {
-    "weather": {
+    "weather-mcp-shayan": {
       "type": "http",
       "url": "http://localhost:8003/mcp"
     }
@@ -106,10 +106,10 @@ Also in .claude/settings.json:
 claude mcp list
 
 # Get details for specific server
-claude mcp get weather
+claude mcp get weather-mcp-shayan
 
 # Remove a server
-claude mcp remove weather
+claude mcp remove weather-mcp-shayan
 
 # Check server status (within Claude Code)
 /mcp
@@ -126,7 +126,7 @@ claude mcp remove weather
 ```json
 {
   "mcpServers": {
-    "weather": {
+    "weather-mcp-shayan": {
       "url": "http://localhost:8003/mcp"
     }
   }
@@ -143,7 +143,7 @@ claude mcp remove weather
 2. Run command: **"MCP: Add Server"**
 3. Choose **"Workspace"** or **"Global"** scope
 4. Fill in the configuration:
-   - **Name**: `weather`
+   - **Name**: `weather-mcp-shayan`
    - **Type**: `http` (Streamable HTTP)
    - **URL**: `http://localhost:8003/mcp`
 
@@ -154,7 +154,7 @@ Create or edit `.vscode/mcp.json` in your workspace:
 ```json
 {
   "servers": {
-    "weather": {
+    "weather-mcp-shayan": {
       "type": "http",
       "url": "http://localhost:8003/mcp"
     }
@@ -176,9 +176,9 @@ Create or edit `.vscode/mcp.json` in your workspace:
    ```json
    {
      "mcpServers": {
-       "weather": {
+       "weather-mcp-shayan": {
          "serverUrl": "http://localhost:8003/mcp",
-         "description": "Karachi weather data from Open-Meteo API"
+         "description": "Weather data for 195 countries from Open-Meteo API"
        }
      }
    }
