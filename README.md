@@ -51,9 +51,9 @@ This repository provides two MCP server implementations:
 ```json
 {
   "mcpServers": {
-    "weather": {
+    "weather-mcp-shayan-command": {
       "command": "python3",
-      "args": ["/absolute/path/to/command/server.py"]
+      "args": ["/absolute/path/to/command/server-command.py"]
     }
   }
 }
@@ -86,5 +86,5 @@ cd command
 python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip3 install -r requirements.txt
-python3 server.py
+python3 server-command.py
 ```

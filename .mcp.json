@@ -1,8 +1,12 @@
 {
   "mcpServers": {
-    "weather-mcp-shayan-local": {
+    "weather-mcp-shayan-http": {
       "type": "http",
       "url": "http://localhost:8003/mcp"
+    },
+    "weather-mcp-shayan-command": {
+      "command": "/Users/shayanrais/Documents/Github/mcp-weather/command/venv/bin/python3",
+      "args": ["/Users/shayanrais/Documents/Github/mcp-weather/command/server-command.py"]
     }
   }
 }

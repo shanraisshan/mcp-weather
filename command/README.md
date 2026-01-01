@@ -1,18 +1,20 @@
-# MCP Weather Server for Karachi (Command)
+# MCP Weather Server for 195 Countries (Command)
 
-A Python-based Model Context Protocol (MCP) command server that fetches current weather data for Karachi, Pakistan using the Open-Meteo API.
+A Python-based Model Context Protocol (MCP) command server that fetches current weather data for 195 countries using the Open-Meteo API.
 
 ## Features
 
 - Command-based MCP server using stdio transport
-- Get current weather conditions for Karachi
-- Returns temperature, humidity, wind speed, precipitation, and weather conditions
+- Get current weather conditions for 195 countries
+- Returns temperature in degrees Celsius
 - Uses free Open-Meteo API (no API key required)
 - Built with FastMCP for simplified MCP server development
 
 ## Installation
 
 ```bash
+cd command
+
 # Create a virtual environment (recommended)
 python3 -m venv venv
 
@@ -30,7 +32,7 @@ pip3 install -r requirements.txt
 
 ```bash
 # Make sure your virtual environment is activated first
-python3 server.py
+python3 server-command.py
 ```
 
 The server will run using stdio transport (standard input/output) for communication with MCP clients.
@@ -48,16 +50,16 @@ Add this configuration to your Claude Desktop config file:
 ```json
 {
   "mcpServers": {
-    "weather": {
+    "weather-mcp-shayan-command": {
       "command": "python3",
-      "args": ["/absolute/path/to/mcp-weather/command/server.py"],
-      "description": "Karachi weather data from Open-Meteo API"
+      "args": ["/absolute/path/to/mcp-weather/command/server-command.py"],
+      "description": "Weather data for 195 countries from Open-Meteo API"
     }
   }
 }
 ```
 
-**Note**: Replace `/absolute/path/to/mcp-weather/command/server.py` with the actual absolute path to the server.py file on your system.
+**Note**: Replace `/absolute/path/to/mcp-weather/command/server-command.py` with the actual absolute path to the server-command.py file on your system.
 
 ### For Claude Code CLI
 
@@ -73,13 +75,13 @@ Add the MCP server using the Claude CLI with stdio transport:
 
 ```bash
 # Local scope (default - personal development)
-claude mcp add --transport stdio weather -- python3 /absolute/path/to/mcp-weather/command/server.py
+claude mcp add --transport stdio weather-mcp-shayan-command -- python3 /absolute/path/to/mcp-weather/command/server-command.py
 
 # Project scope (shared via .mcp.json in project root)
-claude mcp add --transport stdio weather --scope project -- python3 /absolute/path/to/mcp-weather/command/server.py
+claude mcp add --transport stdio weather-mcp-shayan-command --scope project -- python3 /absolute/path/to/mcp-weather/command/server-command.py
 
 # User scope (available across all projects)
-claude mcp add --transport stdio weather --scope user -- python3 /absolute/path/to/mcp-weather/command/server.py
+claude mcp add --transport stdio weather-mcp-shayan-command --scope user -- python3 /absolute/path/to/mcp-weather/command/server-command.py
 ```
 
 **Important**: The double dash (`--`) separates Claude's flags from the server command.
@@ -89,7 +91,7 @@ claude mcp add --transport stdio weather --scope user -- python3 /absolute/path/
 If using a virtual environment, specify the full Python path:
 
 ```bash
-claude mcp add --transport stdio weather -- /absolute/path/to/mcp-weather/command/venv/bin/python3 /absolute/path/to/mcp-weather/command/server.py
+claude mcp add --transport stdio weather-mcp-shayan-command -- /absolute/path/to/mcp-weather/command/venv/bin/python3 /absolute/path/to/mcp-weather/command/server-command.py
 ```
 
 **Method 2: Manual Configuration (Project Scope)**
@@ -99,9 +101,9 @@ Create `.mcp.json` in your project root:
 ```json
 {
   "mcpServers": {
-    "weather": {
+    "weather-mcp-shayan-command": {
       "command": "python3",
-      "args": ["/absolute/path/to/mcp-weather/command/server.py"]
+      "args": ["/absolute/path/to/mcp-weather/command/server-command.py"]
     }
   }
 }
@@ -120,8 +122,8 @@ This configuration will be shared with your team via version control.
 **Scope Precedence**: Local > Project > User
 
 **Usage**:
-1. The `get_karachi_weather` tool will be available automatically
-2. Ask Claude: "What's the weather in Karachi?"
+1. 195 weather tools will be available (e.g., `get_india_weather_shayan`, `get_france_weather_shayan`)
+2. Ask Claude: "What's the weather in India?" or any country
 3. Or use slash command in Claude Code: `/mcp` to view available tools
 
 **Management Commands**:
@@ -130,10 +132,10 @@ This configuration will be shared with your team via version control.
 claude mcp list
 
 # Get details for specific server
-claude mcp get weather
+claude mcp get weather-mcp-shayan-command
 
 # Remove a server
-claude mcp remove weather
+claude mcp remove weather-mcp-shayan-command
 
 # Check server status (within Claude Code)
 /mcp
@@ -144,7 +146,7 @@ claude mcp remove weather
 claude mcp list
 ```
 
-You should see "weather" in the list of configured servers.
+You should see "weather-mcp-shayan-command" in the list of configured servers.
 
 ### For Augment Code
 
@@ -162,9 +164,9 @@ Augment Code supports MCP servers and provides multiple methods to configure the
 4. Scroll to the **MCP servers** section
 5. Click **"+ Add MCP"** (for local servers)
 6. Fill in the configuration:
-   - **Name**: `weather`
+   - **Name**: `weather-mcp-shayan-command`
    - **Command**: `python3`
-   - **Args**: Add argument `/absolute/path/to/mcp-weather/command/server.py`
+   - **Args**: Add argument `/absolute/path/to/mcp-weather/command/server-command.py`
 7. Click **Save**
 
 **Method 2: JSON Import**
@@ -176,9 +178,9 @@ Augment Code supports MCP servers and provides multiple methods to configure the
 ```json
 {
   "mcpServers": {
-    "weather": {
+    "weather-mcp-shayan-command": {
       "command": "python3",
-      "args": ["/absolute/path/to/mcp-weather/command/server.py"]
+      "args": ["/absolute/path/to/mcp-weather/command/server-command.py"]
     }
   }
 }
@@ -186,7 +188,7 @@ Augment Code supports MCP servers and provides multiple methods to configure the
 
 4. Click **Save**
 
-**Note**: Replace `/absolute/path/to/mcp-weather/command/server.py` with the actual absolute path to the server.py file on your system.
+**Note**: Replace `/absolute/path/to/mcp-weather/command/server-command.py` with the actual absolute path to the server-command.py file on your system.
 
 **Method 3: Using Virtual Environment Path**
 
@@ -195,9 +197,9 @@ If using a virtual environment, specify the full Python path:
 ```json
 {
   "mcpServers": {
-    "weather": {
+    "weather-mcp-shayan-command": {
       "command": "/absolute/path/to/mcp-weather/command/venv/bin/python3",
-      "args": ["/absolute/path/to/mcp-weather/command/server.py"]
+      "args": ["/absolute/path/to/mcp-weather/command/server-command.py"]
     }
   }
 }
@@ -205,22 +207,22 @@ If using a virtual environment, specify the full Python path:
 
 **Usage with Augment Code**:
 
-1. The `get_karachi_weather` tool will be available in Augment Agent
+1. 195 weather tools will be available in Augment Agent (e.g., `get_india_weather_shayan`)
 2. Ask questions like:
-   - "What's the current weather in Karachi?"
-   - "Check the weather conditions in Karachi"
-   - "Tell me the temperature in Karachi"
+   - "What's the current weather in India?"
+   - "Check the weather conditions in France"
+   - "Tell me the temperature in Japan"
 
 **Verification**:
 
-- Check the MCP servers list in Settings to confirm "weather" appears
+- Check the MCP servers list in Settings to confirm "weather-mcp-shayan-command" appears
 - Look for the weather tool in Augment Agent's available tools
 - Use the "..." menu next to the server name to view status or logs
 
 **Troubleshooting**:
 
 - Ensure all dependencies are installed: `pip3 install -r requirements.txt`
-- Verify the absolute path to server.py is correct
+- Verify the absolute path to server-command.py is correct
 - Check the Augment logs if the server fails to start
 - Use the virtual environment Python path if you have dependency issues
 
@@ -239,10 +241,10 @@ GitHub Copilot in VSCode supports MCP servers starting from **VS Code 1.102**. Y
 2. Run command: **"MCP: Add Server"**
 3. Choose **"Workspace"** or **"Global"** scope
 4. Fill in the configuration:
-   - **Name**: `weather`
+   - **Name**: `weather-mcp-shayan-command`
    - **Type**: `stdio`
    - **Command**: `python3`
-   - **Args**: `/absolute/path/to/mcp-weather/command/server.py`
+   - **Args**: `/absolute/path/to/mcp-weather/command/server-command.py`
 
 **Method 2: Manual Configuration**
 
@@ -251,10 +253,10 @@ Create or edit `.vscode/mcp.json` in your workspace:
 ```json
 {
   "servers": {
-    "weather": {
+    "weather-mcp-shayan-command": {
       "type": "stdio",
       "command": "python3",
-      "args": ["/absolute/path/to/mcp-weather/command/server.py"]
+      "args": ["/absolute/path/to/mcp-weather/command/server-command.py"]
     }
   }
 }
@@ -269,10 +271,10 @@ If using a virtual environment, specify the full Python path:
 ```json
 {
   "servers": {
-    "weather": {
+    "weather-mcp-shayan-command": {
       "type": "stdio",
       "command": "/absolute/path/to/mcp-weather/command/venv/bin/python3",
-      "args": ["/absolute/path/to/mcp-weather/command/server.py"]
+      "args": ["/absolute/path/to/mcp-weather/command/server-command.py"]
     }
   }
 }
@@ -282,22 +284,22 @@ If using a virtual environment, specify the full Python path:
 
 1. Open GitHub Copilot Chat (Ctrl/Cmd + Alt + I)
 2. Enable **Agent Mode** if available
-3. The `get_karachi_weather` tool will be available in the tool picker
+3. 195 weather tools will be available in the tool picker (e.g., `get_india_weather_shayan`)
 4. Ask questions like:
-   - "What's the current weather in Karachi?"
-   - "Check the weather conditions"
-   - "Tell me the temperature in Karachi"
+   - "What's the current weather in India?"
+   - "Check the weather conditions in Germany"
+   - "Tell me the temperature in Brazil"
 
 **Verification**:
 
 1. Run Command Palette: **"MCP: List Servers"**
-2. Verify "weather" appears in the list
+2. Verify "weather-mcp-shayan-command" appears in the list
 3. Check status is "Running"
-4. Open Copilot Chat and check the tool picker for `get_karachi_weather`
+4. Open Copilot Chat and check the tool picker for weather tools
 
 **Troubleshooting**:
 
-- Run **"MCP: List Servers"** → Select "weather" → Click "Show Output" to view logs
+- Run **"MCP: List Servers"** → Select "weather-mcp-shayan-command" → Click "Show Output" to view logs
 - Use **"MCP: Reset Cached Tools"** to refresh tool discovery
 - Restart VS Code after configuration changes
 - If trust dialog appears, confirm you trust the server before proceeding
@@ -308,25 +310,18 @@ If using a virtual environment, specify the full Python path:
 
 Any MCP client that supports stdio transport can use this server. Configure it with:
 - **Command**: `python3`
-- **Args**: `["/absolute/path/to/mcp-weather/command/server.py"]`
+- **Args**: `["/absolute/path/to/mcp-weather/command/server-command.py"]`
 
-The server provides one tool:
+The server provides 195 weather tools:
 
-- `get_karachi_weather`: Fetches current weather for Karachi
+- `get_{country}_weather_shayan`: Fetches current weather for the specified country's capital (e.g., `get_india_weather_shayan`, `get_france_weather_shayan`)
 
 ## Example Response
 
-When you ask "What's the weather in Karachi?", you'll get a formatted response like:
+When you ask "What's the weather in India?", you'll get a response like:
 
 ```
-🌍 **Karachi, Pakistan**
-📅 2025-01-20T10:30
-
-🌡️ Temperature: 22.5°C (feels like 21.8°C)
-☁️ Conditions: Partly cloudy
-💧 Humidity: 65%
-💨 Wind Speed: 15.2 km/h
-🌧️ Precipitation: 0 mm
+15.9°C
 ```
 
 ## API Used
@@ -338,7 +333,7 @@ This server uses the free [Open-Meteo API](https://open-meteo.com/) which requir
 - Built with FastMCP (Python MCP SDK)
 - Uses stdio transport for communication (standard input/output)
 - Async/await for efficient HTTP requests
-- Single tool: `get_karachi_weather`
+- 195 tools: `get_{country}_weather_shayan`
 
 ## Differences from HTTP Server
 
@@ -360,9 +355,9 @@ If you're using a virtual environment, you may need to use the full path to the 
 ```json
 {
   "mcpServers": {
-    "weather": {
+    "weather-mcp-shayan-command": {
       "command": "/absolute/path/to/mcp-weather/command/venv/bin/python3",
-      "args": ["/absolute/path/to/mcp-weather/command/server.py"]
+      "args": ["/absolute/path/to/mcp-weather/command/server-command.py"]
     }
   }
 }
@@ -370,10 +365,10 @@ If you're using a virtual environment, you may need to use the full path to the 
 
 ### Permission Denied
 
-If you get a permission denied error, make sure the server.py file is executable:
+If you get a permission denied error, make sure the server-command.py file is executable:
 
 ```bash
-chmod +x server.py
+chmod +x server-command.py
 ```
 
 Or specify the python3 command explicitly in your configuration.
