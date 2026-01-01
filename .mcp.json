@@ -1,5 +1,9 @@
 {
   "mcpServers": {
+    "weather-mcp-shayan-http-render": {
+      "type": "http",
+      "url": "https://mcp-weather-j5kl.onrender.com/mcp"
+    },
     "weather-mcp-shayan-http": {
       "type": "http",
       "url": "http://localhost:8003/mcp"
