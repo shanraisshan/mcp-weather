@@ -312,7 +312,7 @@ async def home(request):
             <p>For Claude Code, Create .mcp.json at project root and add the following:</p>
             <pre><code>{{
   <span class="key">"mcpServers"</span>: {{
-    <span class="key">"weather-mcp-karachi"</span>: {{
+    <span class="key">"weather-mcp-shayan-http"</span>: {{
       <span class="key">"type"</span>: <span class="string">"http"</span>,
       <span class="key">"url"</span>: <span class="string">"https://mcp-weather-j5kl.onrender.com/mcp"</span>
     }}
