@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "weather-mcp-shayan-local": {
+      "type": "http",
+      "url": "http://localhost:8003/mcp"
+    }
+  }
+}
